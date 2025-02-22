@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  battery-monitor:
+    build: .
+    container_name: battery-monitor
+    restart: unless-stopped
+    environment:
+      - YANDEX_IOT_TOKEN=${YANDEX_IOT_TOKEN}
+      - YANDEX_IOT_DEVICE_ID=${YANDEX_IOT_DEVICE_ID}
+    volumes:
+      - /sys/class/power_supply/BAT0/capacity:/sys/class/power_supply/BAT0/capacity:ro
