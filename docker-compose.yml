@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  battery-monitor:
+  volt-smart:
     build: .
-    container_name: battery-monitor
+    container_name: volt-smart
     restart: unless-stopped
     environment:
       - YANDEX_IOT_TOKEN=${YANDEX_IOT_TOKEN}

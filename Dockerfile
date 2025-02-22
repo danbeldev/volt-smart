@@ -1,28 +1,11 @@
-# Используем официальный Rust-образ
-FROM rust:1.85.0 AS builder
-
-# Устанавливаем рабочую директорию
-WORKDIR /app
-
-# Копируем Cargo-файлы отдельно, чтобы использовать кэширование
-COPY Cargo.toml Cargo.lock ./
-RUN mkdir src && echo "fn main() {}" > src/main.rs
-RUN cargo build --release || true
-
-# Копируем исходный код
-COPY . .
-
-# Собираем финальный бинарник
-RUN cargo build --release
-
-# Создаем минимальный образ с Debian
+# Используем минимальный образ для запуска скомпилированного бинарника
 FROM debian:bullseye-slim
 
-# Устанавливаем зависимости для работы Rust-приложений
+# Устанавливаем зависимости для работы приложения (например, сертификаты)
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-# Копируем скомпилированное приложение
-COPY --from=builder /app/target/release/monitor_battery /usr/local/bin/monitor_battery
+# Копируем скомпилированный бинарник в контейнер
+COPY target/release/volt-smart /usr/local/bin/volt-smart
 
 # Копируем .env файл
 COPY .env /app/.env
@@ -31,4 +14,4 @@ COPY .env /app/.env
 WORKDIR /app
 
 # Запускаем приложение
-CMD ["/usr/local/bin/monitor_battery"]
+CMD ["/usr/local/bin/volt-smart"]
